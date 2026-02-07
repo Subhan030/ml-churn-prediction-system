@@ -1,36 +1,35 @@
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 import joblib
 
-def build_model(preprocessor, model_name="logistic"):
-    if model_name == "logistic":
-        model = LogisticRegression(max_iter=1000)
+from src.features.build_features import build_preprocessor
 
-    elif model_name == "random_forest":
-        model = RandomForestClassifier(
-            n_estimators=200,
-            random_state=42,
-            n_jobs=-1
-        )
 
-    elif model_name == "gradient_boosting":
-        model = GradientBoostingClassifier(random_state=42)
+def train_gradient_boosting(
+    X_train,
+    y_train,
+    numerical_features,
+    categorical_features,
+    binary_features,
+):
+    preprocessor = build_preprocessor(
+        numerical_features,
+        categorical_features,
+        binary_features
+    )
 
-    else:
-        raise ValueError(f"Unsupported model_name: {model_name}")
-
-    pipeline = Pipeline(
+    model = Pipeline(
         steps=[
             ("preprocessor", preprocessor),
-            ("model", model)
+            ("model", GradientBoostingClassifier(
+                learning_rate=0.1,
+                n_estimators=100,
+                max_depth=2,
+                random_state=42
+            ))
         ]
     )
 
-    return pipeline
-
-
-def train_model(model, X_train, y_train):
     model.fit(X_train, y_train)
     return model
 
