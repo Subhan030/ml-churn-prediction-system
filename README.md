@@ -1,4 +1,4 @@
-Customer Churn Prediction System
+##Customer Churn Prediction System
 
 An end-to-end machine learning system that predicts customer churn for a telecom company and serves real-time predictions using FastAPI.
 
