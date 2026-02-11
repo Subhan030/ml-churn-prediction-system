@@ -88,16 +88,19 @@ Interactive Swagger UI for testing
 
 ## How to Run the Project
 1. Create and activate a virtual environment
+```
 python -m venv venv
 source venv/bin/activate
-
+```
 2. Install dependencies
+```
 pip install -r requirements.txt
-
-3. Start the FastAPI server
+```
+4. Start the FastAPI server
+```
 uvicorn app.main:app --reload
-
-4. Access Swagger UI
+```
+6. Access Swagger UI
 http://127.0.0.1:8000/docs
 
 Example API Request
