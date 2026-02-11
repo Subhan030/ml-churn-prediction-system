@@ -101,6 +101,8 @@ uvicorn app.main:app --reload
 http://127.0.0.1:8000/docs
 
 Example API Request
+
+```
 {
   "tenure": 12,
   "MonthlyCharges": 70.5,
@@ -113,13 +115,17 @@ Example API Request
   "Dependents": "No",
   "PaperlessBilling": "Yes"
 }
+```
 
 Example API Response
+
+```
 {
   "churn_probability": 0.56,
   "churn_prediction": 1,
   "threshold": 0.3
 }
+```
 
 Input Validation and Safety
 
