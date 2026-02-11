@@ -132,6 +132,7 @@ Rejected invalid requests before model execution
 This ensures reliable and safe predictions.
 
 ## Project Structure
+
 ml-churn-prediction-system/
 ├── app/ # FastAPI application
 ├── src/ # Data processing, features, models
@@ -140,6 +141,8 @@ ml-churn-prediction-system/
 ├── data/ # Dataset
 ├── requirements.txt
 └── README.md
+
+
 
 ## Future Improvements
 
