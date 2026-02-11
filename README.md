@@ -133,11 +133,11 @@ This ensures reliable and safe predictions.
 
 ## Project Structure
 ml-churn-prediction-system/
-├── app/              # FastAPI application
-├── src/              # Data processing, features, models
-├── notebooks/        # EDA, training, evaluation
-├── models/           # Saved trained models
-├── data/             # Dataset
+├── app/ # FastAPI application
+├── src/ # Data processing, features, models
+├── notebooks/ # EDA, training, evaluation
+├── models/ # Saved trained models
+├── data/ # Dataset
 ├── requirements.txt
 └── README.md
 
