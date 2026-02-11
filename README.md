@@ -1,15 +1,15 @@
-##Customer Churn Prediction System
+# Customer Churn Prediction System
 
 An end-to-end machine learning system that predicts customer churn for a telecom company and serves real-time predictions using FastAPI.
 
 This project demonstrates the full machine learning lifecycle, including data preprocessing, feature engineering, model training and evaluation, and deployment as a production-style API.
 
-Problem Statement
+## Problem Statement
 
 Customer churn occurs when customers discontinue a service, leading to direct revenue loss.
 The objective of this project is to predict whether a customer is likely to churn so that proactive retention strategies can be applied.
 
-Dataset
+## Dataset
 
 Source: Telco Customer Churn Dataset (IBM Sample Data)
 
@@ -17,7 +17,7 @@ Target variable: Churn (0 = No, 1 = Yes)
 
 Class distribution: Approximately 27% churners
 
-Approach
+## Approach
 Data Processing
 
 Converted numeric columns such as TotalCharges to appropriate data types
@@ -50,7 +50,7 @@ Focused on recall for churners due to higher business cost of false negatives
 
 Tuned the decision threshold to improve churn detection
 
-Model Selection
+## Model Selection
 
 Selected Gradient Boosting as the final model due to:
 
@@ -70,7 +70,7 @@ Accuracy: ~80%
 
 These metrics provide a balanced trade-off between churn detection and false positives.
 
-FastAPI Deployment
+## FastAPI Deployment
 
 The trained model is deployed using FastAPI for real-time inference.
 
@@ -86,7 +86,7 @@ Strict input validation using Pydantic schemas
 
 Interactive Swagger UI for testing
 
-How to Run the Project
+## How to Run the Project
 1. Create and activate a virtual environment
 python -m venv venv
 source venv/bin/activate
@@ -131,7 +131,7 @@ Rejected invalid requests before model execution
 
 This ensures reliable and safe predictions.
 
-Project Structure
+## Project Structure
 ml-churn-prediction-system/
 ├── app/              # FastAPI application
 ├── src/              # Data processing, features, models
@@ -141,7 +141,7 @@ ml-churn-prediction-system/
 ├── requirements.txt
 └── README.md
 
-Future Improvements
+## Future Improvements
 
 Add monitoring for prediction drift
 
@@ -151,6 +151,6 @@ Deploy using Docker or cloud services
 
 Add batch prediction endpoints
 
-Summary
+## Summary
 
 This project demonstrates how to build a production-oriented machine learning system, not just a standalone model. It emphasizes reproducibility, evaluation aligned with business goals, and deployability using modern APIs.
