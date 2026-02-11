@@ -36,7 +36,7 @@ Applied one-hot encoding for categorical features
 
 Ensured identical preprocessing during training and inference
 
-Model Training and Evaluation
+## Model Training and Evaluation
 
 Trained and evaluated multiple models:
 
