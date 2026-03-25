@@ -43,34 +43,6 @@ Selected **Gradient Boosting** as the final model due to:
 
 These metrics provide a balanced trade-off between churn detection and false positives. The priority was capturing potential churners (Recall) due to the higher business cost of missed interventions.
 
-## How to Run the Project
-
-### 1. Setup Environment
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 2. Configure AI Integrations
-To enable the Generative AI retention strategies, export an API key for Groq (or OpenAI) in your terminal. If not provided, it will gracefully fall back to a rule-based template generation.
-```bash
-export GROQ_API_KEY="your-api-key-here"
-```
-
-### 3. Run the Streamlit Dashboard (Frontend)
-```bash
-streamlit run streamlit_app.py
-```
-The application will launch in your browser at http://localhost:8501.
-
-### 4. Run the FastAPI Server (Backend / REST API)
-If you wish to test the raw JSON endpoints instead of the dashboard:
-```bash
-uvicorn app.main:app --reload
-```
-You can access the interactive Swagger UI at http://127.0.0.1:8000/docs.
-
 ## Project Structure
 
 ```
@@ -84,6 +56,8 @@ ml-churn-prediction-system/
 ├── requirements.txt  # Core dependencies
 └── README.md
 ```
+## Deployed Link
+[https://ml-churn-prediction-system.streamlit.app/](url)
 
 ## Future Improvements
 
