@@ -2,7 +2,7 @@ setuptools>=65.0.0
 wheel
 streamlit
 pandas
-scikit-learn
+scikit-learn==1.3.2
 joblib
 matplotlib
 shap
