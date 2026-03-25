@@ -56,8 +56,7 @@ ml-churn-prediction-system/
 ├── requirements.txt  # Core dependencies
 └── README.md
 ```
-## Deployed Link
-[https://ml-churn-prediction-system.streamlit.app/](url)
+
 
 ## Future Improvements
 
