@@ -1,144 +1,75 @@
 # Customer Churn Prediction System
 
-An end-to-end machine learning system that predicts customer churn for a telecom company and serves real-time predictions using FastAPI.
+An end-to-end machine learning system that predicts customer churn for a telecom company. It serves real-time predictions using FastAPI and provides an interactive web dashboard using Streamlit, featuring real-time AI-generated retention strategies and model explainability.
 
-This project demonstrates the full machine learning lifecycle, including data preprocessing, feature engineering, model training and evaluation, and deployment as a production-style API.
+This project demonstrates the full machine learning lifecycle, including data preprocessing, feature engineering, model training and evaluation, and deployment as a production-style application.
 
 ## Problem Statement
 
-Customer churn occurs when customers discontinue a service, leading to direct revenue loss.
-The objective of this project is to predict whether a customer is likely to churn so that proactive retention strategies can be applied.
+Customer churn occurs when customers discontinue a service, leading to direct revenue loss. The objective of this project is to predict whether a customer is likely to churn so that proactive, targeted retention strategies can be applied before they leave.
 
 ## Dataset
 
-Source: Telco Customer Churn Dataset (IBM Sample Data)
+* Source: Telco Customer Churn Dataset (IBM Sample Data)
+* Target variable: Churn (0 = No, 1 = Yes)
+* Class distribution: Approximately 27% churners
 
-Target variable: Churn (0 = No, 1 = Yes)
+## Technical Architecture
 
-Class distribution: Approximately 27% churners
+The application is split into a robust backend architecture and an interactive frontend:
+* **Backend (FastAPI)**: Serves the primary machine learning inference via a strict REST API.
+* **Frontend (Streamlit)**: A comprehensive business dashboard allowing dynamic inputs, visualizations, and automated AI strategy generation.
+* **Explainability (SHAP)**: Provides local, prediction-level explanations to build trust in the model outputs (waterfall charts).
+* **Generative AI (Groq/OpenAI)**: Automatically drafts personalized retention emails for high-risk customers based on their profile.
 
-## Approach
-Data Processing
+## Approach & Model Selection
 
-Converted numeric columns such as TotalCharges to appropriate data types
+### Data Processing & Feature Engineering
+* Used scikit-learn Pipelines to prevent data leakage.
+* Preserved raw categorical features for pipeline-based preprocessing.
+* Applied standard scaling for numerical features and one-hot encoding for categorical features.
+* Ensured identical preprocessing during training and inference.
 
-Removed invalid and missing records
+### Model Selection
+Selected **Gradient Boosting** as the final model due to:
+* Strong recall on the churn class.
+* Higher ROC-AUC score compared to Logistic Regression and Random Forests.
+* Ability to model non-linear relationships.
 
-Preserved raw categorical features for pipeline-based preprocessing
+### Model Performance
+* Recall (churn class): ~77%
+* ROC-AUC: ~0.83
+* Accuracy: ~80%
 
-Feature Engineering and Pipelines
-
-Used scikit-learn Pipelines to prevent data leakage
-
-Applied standard scaling for numerical features
-
-Applied one-hot encoding for categorical features
-
-Ensured identical preprocessing during training and inference
-
-## Model Training and Evaluation
-
-Trained and evaluated multiple models:
-
-Logistic Regression
-
-Random Forest
-
-Gradient Boosting
-
-Focused on recall for churners due to higher business cost of false negatives
-
-Tuned the decision threshold to improve churn detection
-
-## Model Selection
-
-Selected Gradient Boosting as the final model due to:
-
-Strong recall on churn class
-
-Higher ROC-AUC score
-
-Ability to model non-linear relationships
-
-Model Performance
-
-Recall (churn class): ~77%
-
-ROC-AUC: ~0.83
-
-Accuracy: ~80%
-
-These metrics provide a balanced trade-off between churn detection and false positives.
-
-## FastAPI Deployment
-
-The trained model is deployed using FastAPI for real-time inference.
-
-API Features
-
-Accepts raw customer data as JSON
-
-Uses the trained preprocessing and model pipeline
-
-Returns churn probability and classification
-
-Strict input validation using Pydantic schemas
-
-Interactive Swagger UI for testing
+These metrics provide a balanced trade-off between churn detection and false positives. The priority was capturing potential churners (Recall) due to the higher business cost of missed interventions.
 
 ## How to Run the Project
-1. Create and activate a virtual environment
-```
+
+### 1. Setup Environment
+```bash
 python -m venv venv
 source venv/bin/activate
-```
-2. Install dependencies
-```
 pip install -r requirements.txt
 ```
-4. Start the FastAPI server
+
+### 2. Configure AI Integrations
+To enable the Generative AI retention strategies, export an API key for Groq (or OpenAI) in your terminal. If not provided, it will gracefully fall back to a rule-based template generation.
+```bash
+export GROQ_API_KEY="your-api-key-here"
 ```
+
+### 3. Run the Streamlit Dashboard (Frontend)
+```bash
+streamlit run streamlit_app.py
+```
+The application will launch in your browser at http://localhost:8501.
+
+### 4. Run the FastAPI Server (Backend / REST API)
+If you wish to test the raw JSON endpoints instead of the dashboard:
+```bash
 uvicorn app.main:app --reload
 ```
-6. Access Swagger UI
-http://127.0.0.1:8000/docs
-
-Example API Request
-
-```
-{
-  "tenure": 12,
-  "MonthlyCharges": 70.5,
-  "TotalCharges": 850.0,
-  "Contract": "Month-to-month",
-  "PaymentMethod": "Electronic check",
-  "InternetService": "Fiber optic",
-  "SeniorCitizen": 0,
-  "Partner": "Yes",
-  "Dependents": "No",
-  "PaperlessBilling": "Yes"
-}
-```
-
-Example API Response
-
-```
-{
-  "churn_probability": 0.56,
-  "churn_prediction": 1,
-  "threshold": 0.3
-}
-```
-
-Input Validation and Safety
-
-Enforced valid categorical values through strict schemas
-
-Applied numeric constraints on input features
-
-Rejected invalid requests before model execution
-
-This ensures reliable and safe predictions.
+You can access the interactive Swagger UI at http://127.0.0.1:8000/docs.
 
 ## Project Structure
 
@@ -149,23 +80,18 @@ ml-churn-prediction-system/
 ├── notebooks/        # EDA, training, evaluation
 ├── models/           # Saved trained models
 ├── data/             # Dataset
-├── requirements.txt
+├── streamlit_app.py  # Streamlit Frontend application
+├── requirements.txt  # Core dependencies
 └── README.md
 ```
 
-
-
-
 ## Future Improvements
 
-Add monitoring for prediction drift
-
-Retrain model with recent customer data
-
-Deploy using Docker or cloud services
-
-Add batch prediction endpoints
+* Add monitoring for prediction drift.
+* Retrain the model dynamically with more recent customer data.
+* Add batch prediction endpoints (CSV upload).
+* Store historical predictions in a database for accuracy tracking over time.
 
 ## Summary
 
-This project demonstrates how to build a production-oriented machine learning system, not just a standalone model. It emphasizes reproducibility, evaluation aligned with business goals, and deployability using modern APIs.
+This project demonstrates how to build a production-oriented machine learning system, not just a standalone model. It emphasizes reproducibility, evaluation aligned with business goals, and deployability using modern APIs, explainable AI, and generative AI features.
