@@ -6,6 +6,15 @@ import matplotlib.pyplot as plt
 import shap
 import warnings
 
+# Configure Matplotlib to use white text/lines so it's visible on Dark Mode transparent backgrounds
+plt.rcParams.update({
+    'text.color': 'white',
+    'axes.labelcolor': 'white',
+    'xtick.color': 'white',
+    'ytick.color': 'white',
+    'axes.edgecolor': 'white'
+})
+
 # Suppress warnings for cleaner UI
 warnings.filterwarnings("ignore")
 
@@ -18,11 +27,10 @@ except ImportError:
 # Set up the page layout
 st.set_page_config(
     page_title="Customer Churn Prediction",
-    page_icon="🔮",
     layout="wide"  
 )
 
-st.title("🔮 Telecom Customer Churn Prediction & Analytics")
+st.title("Telecom Customer Churn Prediction & Analytics")
 
 # Load the model directly
 @st.cache_resource
@@ -42,9 +50,10 @@ if pipeline is None:
 preprocessor = pipeline.named_steps["preprocessor"]
 model = pipeline.named_steps["model"]
 feature_names = preprocessor.get_feature_names_out()
+clean_feature_names = [f.replace("num__", "").replace("cat__", "").replace("bin__", "").replace("_", " ") for f in feature_names]
 
 # Generate the tabs for different features
-tab1, tab2 = st.tabs(["🔮 Prediction & AI Retention", "📊 Analytics Dashboard"])
+tab1, tab2 = st.tabs(["Prediction & AI Retention", "Analytics Dashboard"])
 
 with tab1:
     st.header("Assess Individual Risk")
@@ -105,10 +114,10 @@ with tab1:
                 with res_col1:
                     st.subheader("Prediction Results")
                     if churn_pred == 1:
-                        st.error(f"**🔴 High Risk** (Probability: {churn_proba:.1%})")
+                        st.error(f"**High Risk** (Probability: {churn_proba:.1%})")
                         st.write("This customer is likely to cancel their service.")
                     else:
-                        st.success(f"**🟢 Low Risk** (Probability: {churn_proba:.1%})")
+                        st.success(f"**Low Risk** (Probability: {churn_proba:.1%})")
                         st.write("This customer is likely to stay.")
                         
                 with res_col2:
@@ -123,19 +132,34 @@ with tab1:
                     # Compute SHAP values for the specific input
                     shap_values = explainer(X_preprocessed)
                     
-                    # Explicitly set feature names for the waterfall plot
-                    shap_values.feature_names = list(feature_names)
+                    # Explicitly set clean feature names for the waterfall plot
+                    shap_values.feature_names = clean_feature_names
                     
-                    # Waterfall plot
-                    fig, ax = plt.subplots(figsize=(6, 4))
-                    shape_plot = shap.plots.waterfall(shap_values[0], show=False)
-                    st.pyplot(plt.gcf())
+                    # Waterfall plot with better sizing for Streamlit
+                    fig, ax = plt.subplots(figsize=(8, 5))
+                    shape_plot = shap.plots.waterfall(shap_values[0], max_display=6, show=False)
+                    
+                    # Make figure background transparent to blend with Streamlit themes
+                    fig.patch.set_alpha(0)
+                    ax.patch.set_alpha(0)
+                    
+                    plt.tight_layout()
+                    st.pyplot(fig, transparent=True)
                     plt.clf()
+                    
+                    # Explaining the Graph to the user
+                    with st.expander("How to read this chart", expanded=True):
+                        st.markdown("""
+                        - **f(x)**: The final predicted risk score for this specific customer (in scaled numbers).
+                        - **E[f(X)]**: The baseline average risk score for all customers.
+                        - **Red Bars**: Features that push the customer's risk *higher* (more likely to churn).
+                        - **Blue Bars**: Features that push the customer's risk *lower* (more likely to stay).
+                        """)
 
                 # 2. AI Retention Strategy
                 if churn_pred == 1:
                     st.divider()
-                    st.subheader("🤖 AI Retention Strategy")
+                    st.subheader("AI Retention Strategy")
                     st.info("The model indicates high risk. Generating a personalized retention gameplan...")
                     
                     groq_api_key = os.environ.get("GROQ_API_KEY")
@@ -171,7 +195,7 @@ with tab1:
                         st.write(email_copy)
                         
                     else:
-                        st.warning("⚠️ GROQ_API_KEY environment variable not set. Falling back to rule-based template.")
+                        st.warning("GROQ_API_KEY environment variable not set. Falling back to rule-based template.")
                         if contract == "Month-to-month":
                             st.write("**Suggested Action:** Offer $10/mo off their bill if they sign a 1-year contract today.")
                             st.text_area("Template Email:", "Hi there,\n\nWe value your loyalty! To show our appreciation, we'd love to offer you $10 off your monthly bill for the next year if you upgrade to a 1-year contract. Reply 'YES' to claim this offer.\n\nBest,\nTelecom Team")
@@ -183,20 +207,31 @@ with tab1:
                 st.error(f"An error occurred during prediction/explanation: {e}")
 
 with tab2:
-    st.header("📊 Global Feature Importance")
+    st.header("Global Feature Importance")
     st.write("This dashboard shows the universal drivers of customer churn across the entire database, helping business teams understand which features matter most over the entirety of the model's history.")
     
     # Extract overall importances from the gradient boosting model inside the pipeline
     importances = model.feature_importances_
     importance_df = pd.DataFrame({
-        "Feature": feature_names,
+        "Feature": clean_feature_names,
         "Importance": importances
-    }).sort_values(by="Importance", ascending=True).tail(15)  # Get top 15 most important
+    }).sort_values(by="Importance", ascending=True).tail(10)  # Get top 10 most important for a cleaner view
     
-    # Plot horizontal bar chart
+    # Plot horizontal bar chart with Streamlit theme blending
     fig2, ax2 = plt.subplots(figsize=(10, 6))
-    ax2.barh(importance_df["Feature"], importance_df["Importance"], color="skyblue")
-    ax2.set_xlabel("Relative Importance (Gini Importance / Gain)")
-    ax2.set_title("Top 15 Most Important Features driving the Churn Model")
-    st.pyplot(fig2)
+    fig2.patch.set_alpha(0)      # Transparent figure background
+    ax2.set_facecolor("none")    # Transparent axes background
+    
+    # Draw bars with a professional blue and hide borders
+    ax2.barh(importance_df["Feature"], importance_df["Importance"], color="#0068C9", edgecolor="none", height=0.6)
+    
+    # Styling text and layout
+    ax2.set_xlabel("Relative Importance (Gini / Gain)", fontsize=12)
+    ax2.set_title("Top 10 Most Important Features Driving Churn", fontsize=16, pad=15)
+    ax2.spines['top'].set_visible(False)
+    ax2.spines['right'].set_visible(False)
+    ax2.tick_params(axis='both', which='major', labelsize=11)
+    
+    plt.tight_layout()
+    st.pyplot(fig2, transparent=True)
     plt.clf()
