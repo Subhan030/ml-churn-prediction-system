@@ -3,6 +3,7 @@ import joblib
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
+import requests
 import shap
 import warnings
 
@@ -103,10 +104,20 @@ with tab1:
         
         with st.spinner("Analyzing Customer Risk & Generating Insights..."):
             try:
-                # 1. Pipeline Prediction
-                churn_proba = pipeline.predict_proba(df)[:, 1][0]
-                threshold = 0.3 # Business-determined threshold
-                churn_pred = int(churn_proba >= threshold)
+                # 1. Pipeline Prediction via FastAPI Backend
+                # Use environment variable for deployed API URL, fallback to localhost
+                base_api_url = os.environ.get("API_URL", "http://localhost:8000")
+                api_url = f"{base_api_url}/predict"
+                
+                response = requests.post(api_url, json=input_data)
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    churn_proba = result["churn_probability"]
+                    churn_pred = result["churn_prediction"]
+                else:
+                    st.error(f"Error from API: {response.status_code} - {response.text}")
+                    st.stop()
                 
                 st.divider()
                 res_col1, res_col2 = st.columns([1, 1.5])

@@ -8,3 +8,4 @@ matplotlib
 shap
 openai
 groq
+requests
