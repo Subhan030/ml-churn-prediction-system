@@ -9,3 +9,6 @@ shap
 openai
 groq
 requests
+fastapi
+uvicorn
+pydantic
