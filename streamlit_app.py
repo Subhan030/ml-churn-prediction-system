@@ -106,8 +106,16 @@ with tab1:
             try:
                 # 1. Pipeline Prediction via FastAPI Backend
                 # Use environment variable for deployed API URL, fallback to localhost
-                base_api_url = os.environ.get("API_URL", "http://localhost:8000")
-                api_url = f"{base_api_url}/predict"
+                # Clean up any accidental leading/trailing spaces or quotes from the environment variable
+                base_api_url = os.environ.get("API_URL", "http://localhost:8000").strip().strip('"').strip("'")
+                
+                # Robustly format the predict URL to handle common configurations:
+                # - If the user provided the base URL (with or without trailing slash)
+                # - If the user provided the full predict URL (with or without trailing slash)
+                if base_api_url.endswith("/predict") or base_api_url.endswith("/predict/"):
+                    api_url = base_api_url.rstrip("/")
+                else:
+                    api_url = f"{base_api_url.rstrip('/')}/predict"
                 
                 response = requests.post(api_url, json=input_data)
                 

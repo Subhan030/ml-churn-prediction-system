@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from app.schemas import CustomerInput
 import joblib
 import pandas as pd
@@ -8,6 +9,15 @@ app = FastAPI(
     title="Customer Churn Prediction API",
     description="Predicts churn probability for telecom customers",
     version="1.0"
+)
+
+# Enable CORS for robust direct integration with frontends
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 MODEL_PATH = os.path.join("models", "gb_churn_model.joblib")
